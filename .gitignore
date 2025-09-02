@@ -77,3 +77,7 @@ pids
 # Temporary folders
 tmp/
 temp/
+
+# Lock files (keep package-lock.json for consistency)
+yarn.lock
+pnpm-lock.yaml
