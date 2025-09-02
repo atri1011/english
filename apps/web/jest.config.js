@@ -7,6 +7,11 @@ const createJestConfig = nextJest({
 const customJestConfig = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testEnvironment: 'jsdom',
+  testMatch: [
+    '**/__tests__/**/*.[jt]s?(x)',
+    '**/?(*.)+(spec|test).[jt]s?(x)',
+    '**/app/\\(main\\)/**/*.test.tsx',
+  ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
     '^@ai-sentence-app/shared-types$': '<rootDir>/../../packages/shared-types/src',

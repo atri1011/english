@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
 import { Button } from "@/components/ui/button";
@@ -78,6 +79,12 @@ export default function LoginPage() {
               Login
             </Button>
           </form>
+          <div className="mt-4 text-center text-sm">
+            还没有账户?{" "}
+            <Link href="/register" className="underline">
+              注册
+            </Link>
+          </div>
         </CardContent>
       </Card>
     </div>

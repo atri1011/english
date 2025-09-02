@@ -2,7 +2,9 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import RegisterPage from './page';
 
-// Mock next/navigation
+// Mock next/navigation - No longer needed for this test file as push is not called.
+// We keep the mock factory to prevent Next.js errors in the test environment,
+// but we don't need to mock the implementation of push.
 jest.mock('next/navigation', () => ({
   useRouter: () => ({
     push: jest.fn(),
@@ -80,5 +82,26 @@ describe('RegisterPage', () => {
     await waitFor(() => {
       expect(screen.getByText(errorMessage)).toBeInTheDocument();
     });
+  });
+
+  it('displays a success message after successful registration', async () => {
+    mockSignUp.mockResolvedValueOnce({ error: null });
+    render(<RegisterPage />);
+
+    const emailInput = screen.getByLabelText(/email/i);
+    const passwordInput = screen.getByLabelText(/password/i);
+    const submitButton = screen.getByRole('button', { name: /create account/i });
+
+    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+    fireEvent.change(passwordInput, { target: { value: 'password123' } });
+    fireEvent.click(submitButton);
+
+    await waitFor(() => {
+      expect(screen.getByText(/check your email/i)).toBeInTheDocument();
+    });
+
+    // Ensure the form is no longer visible
+    expect(screen.queryByLabelText(/email/i)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/password/i)).not.toBeInTheDocument();
   });
 });

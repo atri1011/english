@@ -54,6 +54,14 @@ export default async function RootLayout({
                 <h1 className="text-xl font-semibold">AI Sentence App</h1>
               </div>
               <div className="flex items-center space-x-4">
+                {session && (
+                  <a
+                    href="/settings"
+                    className="text-sm font-medium text-foreground hover:text-foreground/80 transition-colors"
+                  >
+                    设置
+                  </a>
+                )}
                 <AuthButton session={session} />
               </div>
             </div>

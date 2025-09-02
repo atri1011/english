@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,27 +17,43 @@ import { Label } from "@/components/ui/label";
 import { createClient } from "@/lib/supabase/client";
 
 export default function RegisterPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleSignUp = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setError(null); // Reset error on new submission
+    setError(null);
     const supabase = createClient();
     const { error } = await supabase.auth.signUp({
       email,
       password,
     });
 
-    if (!error) {
-      router.push("/");
-    } else {
+    if (error) {
       setError(error.message);
       console.error(error);
+    } else {
+      setIsSubmitted(true);
     }
   };
+
+  if (isSubmitted) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Card className="w-full max-w-sm">
+          <CardHeader>
+            <CardTitle>Check your email</CardTitle>
+            <CardDescription>
+              We've sent a confirmation link to your email address. Please
+              check your inbox to complete the registration.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen">
@@ -71,15 +88,21 @@ export default function RegisterPage() {
                   required
                 />
               </div>
-              {error && (
-                <p className="text-red-500 text-sm mt-2">{error}</p>
-              )}
+              {error && <p className="text-red-500 text-sm">{error}</p>}
               <Button type="submit" className="w-full">
                 Create Account
               </Button>
             </div>
           </form>
         </CardContent>
+        <CardFooter className="flex justify-center">
+          <p className="text-sm text-gray-600">
+            Already have an account?{" "}
+            <Link href="/login" className="text-blue-600 hover:underline">
+              Log in
+            </Link>
+          </p>
+        </CardFooter>
       </Card>
     </div>
   );
