@@ -1,6 +1,9 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import { createServerClient } from '@supabase/ssr'
+import { cookies } from 'next/headers'
+import AuthButton from '@/components/AuthButton'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -9,11 +12,16 @@ export const metadata: Metadata = {
   description: 'Learn English through AI-powered sentence analysis and practice',
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const supabase = createServerClient()
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+
   return (
     <html lang="en">
       <body className={inter.className}>
@@ -24,7 +32,7 @@ export default function RootLayout({
                 <h1 className="text-xl font-semibold">AI Sentence App</h1>
               </div>
               <div className="flex items-center space-x-4">
-                <span className="text-sm text-muted-foreground">Welcome</span>
+                <AuthButton session={session} />
               </div>
             </div>
           </div>
