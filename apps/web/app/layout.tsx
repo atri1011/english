@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google'
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import AuthButton from '@/components/AuthButton'
+import { config } from '@/lib/config'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -17,7 +18,28 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const supabase = createServerClient()
+  const supabase = createServerClient(
+    config.supabase.url,
+    config.supabase.anonKey,
+    {
+      cookies: {
+        getAll() {
+          return cookies().getAll()
+        },
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) =>
+              cookies().set(name, value, options)
+            )
+          } catch {
+            // The `setAll` method was called from a Server Component.
+            // This can be ignored if you have middleware refreshing
+            // user sessions.
+          }
+        },
+      },
+    }
+  )
   const {
     data: { session },
   } = await supabase.auth.getSession()

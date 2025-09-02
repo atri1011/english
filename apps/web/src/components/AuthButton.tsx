@@ -1,11 +1,11 @@
 "use client";
 
-import { createServerClient } from "@supabase/ssr";
+import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { Button } from "./ui/button";
 
 export default function AuthButton({ session }: { session: any }) {
-  const supabase = createServerClient();
+  const supabase = createClient();
   const router = useRouter();
 
   const handleSignOut = async () => {

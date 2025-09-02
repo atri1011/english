@@ -2,8 +2,14 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import LoginPage from './page';
-import { createServerClient } from '@supabase/ssr';
+import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
+
+// Mock the modules
+jest.mock('@/lib/supabase/client');
+jest.mock('next/navigation', () => ({
+  useRouter: jest.fn(),
+}));
 
 describe('LoginPage', () => {
   const mockSignIn = jest.fn();
@@ -11,7 +17,7 @@ describe('LoginPage', () => {
   const mockRefresh = jest.fn();
 
   beforeEach(() => {
-    (createServerClient as jest.Mock).mockReturnValue({
+    (createClient as jest.Mock).mockReturnValue({
       auth: {
         signInWithPassword: mockSignIn,
       },
@@ -20,6 +26,7 @@ describe('LoginPage', () => {
       push: mockPush,
       refresh: mockRefresh,
     });
+    mockSignIn.mockResolvedValue({ error: null });
   });
 
   afterEach(() => {
